@@ -19,7 +19,6 @@ static ngx_inline void ngx_rbtree_left_rotate(ngx_rbtree_node_t **root,
 static ngx_inline void ngx_rbtree_right_rotate(ngx_rbtree_node_t **root,
     ngx_rbtree_node_t *sentinel, ngx_rbtree_node_t *node);
 
-/*tanjh
 void
 ngx_rbtree_insert(ngx_thread_volatile ngx_rbtree_t *tree,
     ngx_rbtree_node_t *node)
@@ -376,4 +375,3 @@ ngx_rbtree_right_rotate(ngx_rbtree_node_t **root, ngx_rbtree_node_t *sentinel,
     temp->right = node;
     node->parent = temp;
 }
-*/

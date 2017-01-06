@@ -57,27 +57,27 @@ typedef void (*ngx_connection_handler_pt)(ngx_connection_t *c);
 #include "ngx_list.h"
 #include "ngx_hash.h"
 #include "ngx_file.h"
-//#include <ngx_crc.h>
-//#include <ngx_crc32.h>
-//#include <ngx_murmurhash.h>
+#include "ngx_crc.h"
+#include "ngx_crc32.h"
+#include "ngx_murmurhash.h"
 #if (NGX_PCRE)
 	#include "ngx_regex.h"
 #endif
-//#include <ngx_radix_tree.h>
+#include "ngx_radix_tree.h"
 #include "ngx_times.h"
-//#include <ngx_shmtx.h>
-//#include <ngx_slab.h>
-//#include <ngx_inet.h>
+#include "ngx_shmtx.h"
+#include "ngx_slab.h"
+#include "ngx_inet.h"
 #include "ngx_cycle.h"
 //#if (NGX_OPENSSL)
-//#include <ngx_event_openssl.h>
+//	#include "../event/ngx_event_openssl.h"
 //#endif
 #include "../os_win32/ngx_process_cycle.h"
 #include "ngx_conf_file.h"
 //#include <ngx_resolver.h>
 //#include <ngx_open_file_cache.h>
 #include "../os_win32/ngx_os.h"
-//#include <ngx_connection.h>
+#include "ngx_connection.h"
 
 
 #define LF     (u_char) 10

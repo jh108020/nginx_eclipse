@@ -56,7 +56,6 @@ struct ngx_rbtree_s {
     (tree)->sentinel = s;                                                     \
     (tree)->insert = i
 
-/*tanjh
 void ngx_rbtree_insert(ngx_thread_volatile ngx_rbtree_t *tree,
     ngx_rbtree_node_t *node);
 void ngx_rbtree_delete(ngx_thread_volatile ngx_rbtree_t *tree,
@@ -65,7 +64,6 @@ void ngx_rbtree_insert_value(ngx_rbtree_node_t *root, ngx_rbtree_node_t *node,
     ngx_rbtree_node_t *sentinel);
 void ngx_rbtree_insert_timer_value(ngx_rbtree_node_t *root,
     ngx_rbtree_node_t *node, ngx_rbtree_node_t *sentinel);
-*/
 
 #define ngx_rbt_red(node)               ((node)->color = 1)
 #define ngx_rbt_black(node)             ((node)->color = 0)

@@ -15,7 +15,6 @@ char           **ngx_os_argv;
 ngx_int_t        ngx_last_process;
 ngx_process_t    ngx_processes[NGX_MAX_PROCESSES];
 
-/*
 ngx_pid_t
 ngx_spawn_process(ngx_cycle_t *cycle, char *name, ngx_int_t respawn)
 {
@@ -239,4 +238,3 @@ ngx_execute(ngx_cycle_t *cycle, ngx_exec_ctx_t *ctx)
 
     return pi.dwProcessId;
 }
-*/

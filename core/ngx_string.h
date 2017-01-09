@@ -279,7 +279,6 @@ void ngx_unescape_uri(u_char **dst, u_char **src, size_t size, ngx_uint_t type);
 //对html标签进行编码。
 uintptr_t ngx_escape_html(u_char *dst, u_char *src, size_t size);
 
-/*tanjh
 typedef struct {
     ngx_rbtree_node_t         node;
     ngx_str_t                 str;
@@ -289,8 +288,7 @@ typedef struct {
 void ngx_str_rbtree_insert_value(ngx_rbtree_node_t *temp,
     ngx_rbtree_node_t *node, ngx_rbtree_node_t *sentinel);
 ngx_str_node_t *ngx_str_rbtree_lookup(ngx_rbtree_t *rbtree, ngx_str_t *name,
-    uint32_tt hash);
-*/
+    uint32_t hash);
 
 void ngx_sort(void *base, size_t n, size_t size,
     ngx_int_t (*cmp)(const void *, const void *));

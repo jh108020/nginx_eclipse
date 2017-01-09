@@ -51,7 +51,7 @@
 
 
 #ifndef NGX_HTTP_SSL
-#define NGX_HTTP_SSL  1
+#define NGX_HTTP_SSL  0
 #endif
 
 
@@ -76,12 +76,12 @@
 
 
 #ifndef NGX_HAVE_OPENSSL_MD5_H
-#define NGX_HAVE_OPENSSL_MD5_H  1
+#define NGX_HAVE_OPENSSL_MD5_H  0
 #endif
 
 
 #ifndef NGX_OPENSSL_MD5
-#define NGX_OPENSSL_MD5  1
+#define NGX_OPENSSL_MD5  0
 #endif
 
 
@@ -91,12 +91,12 @@
 
 
 #ifndef NGX_HAVE_OPENSSL_SHA1_H
-#define NGX_HAVE_OPENSSL_SHA1_H  1
+#define NGX_HAVE_OPENSSL_SHA1_H  0
 #endif
 
 
 #ifndef NGX_HAVE_SHA1
-#define NGX_HAVE_SHA1  1
+#define NGX_HAVE_SHA1  0
 #endif
 
 

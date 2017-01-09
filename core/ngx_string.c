@@ -1673,7 +1673,6 @@ ngx_escape_html(u_char *dst, u_char *src, size_t size)
     return (uintptr_t) dst;
 }
 
-/*tanjh
 void
 ngx_str_rbtree_insert_value(ngx_rbtree_node_t *temp,
     ngx_rbtree_node_t *node, ngx_rbtree_node_t *sentinel)
@@ -1755,10 +1754,8 @@ ngx_str_rbtree_lookup(ngx_rbtree_t *rbtree, ngx_str_t *val, uint32_t hash)
 
     return NULL;
 }
-*/
 
 /* ngx_sort() is implemented as insertion sort because we need stable sort */
-/*tanjh
 void
 ngx_sort(void *base, size_t n, size_t size,
     ngx_int_t (*cmp)(const void *, const void *))
@@ -1788,7 +1785,6 @@ ngx_sort(void *base, size_t n, size_t size,
 
     ngx_free(p);
 }
-*/
 
 #if (NGX_MEMCPY_LIMIT)
 

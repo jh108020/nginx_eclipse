@@ -74,8 +74,8 @@ typedef void (*ngx_connection_handler_pt)(ngx_connection_t *c);
 //#endif
 #include "../os_win32/ngx_process_cycle.h"
 #include "ngx_conf_file.h"
-//#include <ngx_resolver.h>
-//#include <ngx_open_file_cache.h>
+#include "ngx_resolver.h"
+#include "ngx_open_file_cache.h"
 #include "../os_win32/ngx_os.h"
 #include "ngx_connection.h"
 

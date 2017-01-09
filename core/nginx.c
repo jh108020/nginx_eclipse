@@ -8,10 +8,10 @@
 #include "nginx.h"
 
 void fff();
-//static ngx_int_t ngx_add_inherited_sockets(ngx_cycle_t *cycle);
+static ngx_int_t ngx_add_inherited_sockets(ngx_cycle_t *cycle);
 static ngx_int_t ngx_get_options(int argc, char *const *argv);
-//static ngx_int_t ngx_process_options(ngx_cycle_t *cycle);
-//static ngx_int_t ngx_save_argv(ngx_cycle_t *cycle, int argc, char *const *argv);
+static ngx_int_t ngx_process_options(ngx_cycle_t *cycle);
+static ngx_int_t ngx_save_argv(ngx_cycle_t *cycle, int argc, char *const *argv);
 static void *ngx_core_module_create_conf(ngx_cycle_t *cycle);
 static char *ngx_core_module_init_conf(ngx_cycle_t *cycle, void *conf);
 static char *ngx_set_user(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
@@ -294,8 +294,7 @@ int ngx_cdecl  main(int argc, char *const *argv){  //ngx_cdecl宏用于显式声
 //#if (NGX_OPENSSL)
 //    ngx_ssl_init(log);  //是否开启了ssl，如果开启在这里进行初始化
 //#endif
-    fff();
-	/*
+
     //init_cycle->log is required for signal handlers and
     //ngx_process_options()
 	//内存管理初始化
@@ -319,6 +318,7 @@ int ngx_cdecl  main(int argc, char *const *argv){  //ngx_cdecl宏用于显式声
     if (ngx_os_init(log) != NGX_OK) {  // 这个ngx_os_init在不同操作系统调用不同的函数，根据系统参数来优化配置
         return 1;
     }
+
 
     //ngx_crc32_table_init() requires ngx_cacheline_size set in ngx_os_init()
     // 初始化CRC表，提高效率，以后就不用计算了，直接用
@@ -369,7 +369,6 @@ int ngx_cdecl  main(int argc, char *const *argv){  //ngx_cdecl宏用于显式声
     if (ccf->master && ngx_process == NGX_PROCESS_SINGLE) {
         ngx_process = NGX_PROCESS_MASTER;
     }
-
 #if !(NGX_WIN32)
 
     if (ngx_init_signals(cycle->log) != NGX_OK) {
@@ -416,61 +415,60 @@ int ngx_cdecl  main(int argc, char *const *argv){  //ngx_cdecl宏用于显式声
     }
 
     return 0;
- */
 }
 
-///*继承socket*/
-//static ngx_int_t
-//ngx_add_inherited_sockets(ngx_cycle_t *cycle)
-//{
-//    u_char           *p, *v, *inherited;
-//    ngx_int_t         s;
-//    ngx_listening_t  *ls;
-//
-//    inherited = (u_char *) getenv(NGINX_VAR);  // 查看是否有设置NGINX这个环境变量
-//
-//    if (inherited == NULL) {
-//        return NGX_OK;
-//    }
-//
-//    ngx_log_error(NGX_LOG_NOTICE, cycle->log, 0,
-//                  "using inherited sockets from \"%s\"", inherited);
-//
-//    if (ngx_array_init(&cycle->listening, cycle->pool, 10,
-//                       sizeof(ngx_listening_t))
-//        != NGX_OK)
-//    {
-//        return NGX_ERROR;
-//    }
-//
-//    for (p = inherited, v = p; *p; p++) {
-//        if (*p == ':' || *p == ';') {  //通过冒号或分号去除列表中的socket
-//            s = ngx_atoi(v, p - v);
-//            if (s == NGX_ERROR) {
-//                ngx_log_error(NGX_LOG_EMERG, cycle->log, 0,
-//                              "invalid socket number \"%s\" in " NGINX_VAR
-//                              " environment variable, ignoring the rest"
-//                              " of the variable", v);
-//                break;
-//            }
-//
-//            v = p + 1;
-//
-//            ls = ngx_array_push(&cycle->listening);  //保存取出来的socket
-//            if (ls == NULL) {
-//                return NGX_ERROR;
-//            }
-//
-//            ngx_memzero(ls, sizeof(ngx_listening_t));
-//
-//            ls->fd = (ngx_socket_t) s;
-//        }
-//    }
-//
-//    ngx_inherited = 1;  //标记继承工作的结束
-//
-//    return ngx_set_inherited_sockets(cycle);
-//}
+/*继承socket*/
+static ngx_int_t
+ngx_add_inherited_sockets(ngx_cycle_t *cycle)
+{
+    u_char           *p, *v, *inherited;
+    ngx_int_t         s;
+    ngx_listening_t  *ls;
+
+    inherited = (u_char *) getenv(NGINX_VAR);  // 查看是否有设置NGINX这个环境变量
+
+    if (inherited == NULL) {
+        return NGX_OK;
+    }
+
+    ngx_log_error(NGX_LOG_NOTICE, cycle->log, 0,
+                  "using inherited sockets from \"%s\"", inherited);
+
+    if (ngx_array_init(&cycle->listening, cycle->pool, 10,
+                       sizeof(ngx_listening_t))
+        != NGX_OK)
+    {
+        return NGX_ERROR;
+    }
+
+    for (p = inherited, v = p; *p; p++) {
+        if (*p == ':' || *p == ';') {  //通过冒号或分号去除列表中的socket
+            s = ngx_atoi(v, p - v);
+            if (s == NGX_ERROR) {
+                ngx_log_error(NGX_LOG_EMERG, cycle->log, 0,
+                              "invalid socket number \"%s\" in " NGINX_VAR
+                              " environment variable, ignoring the rest"
+                              " of the variable", v);
+                break;
+            }
+
+            v = p + 1;
+
+            ls = ngx_array_push(&cycle->listening);  //保存取出来的socket
+            if (ls == NULL) {
+                return NGX_ERROR;
+            }
+
+            ngx_memzero(ls, sizeof(ngx_listening_t));
+
+            ls->fd = (ngx_socket_t) s;
+        }
+    }
+
+    ngx_inherited = 1;  //标记继承工作的结束
+
+    return ngx_set_inherited_sockets(cycle);
+}
 
 
 char **
@@ -572,99 +570,99 @@ tz_found:
 }
 
 
-//ngx_pid_t
-//ngx_exec_new_binary(ngx_cycle_t *cycle, char *const *argv)
-//{
-//    char             **env, *var;
-//    u_char            *p;
-//    ngx_uint_t         i, n;
-//    ngx_pid_t          pid;
-//    ngx_exec_ctx_t     ctx;
-//    ngx_core_conf_t   *ccf;
-//    ngx_listening_t   *ls;
-//
-//    ngx_memzero(&ctx, sizeof(ngx_exec_ctx_t));
-//
-//    ctx.path = argv[0];
-//    ctx.name = "new binary process";
-//    ctx.argv = argv;
-//
-//    n = 2;
-//    env = ngx_set_environment(cycle, &n);
-//    if (env == NULL) {
-//        return NGX_INVALID_PID;
-//    }
-//
-//    var = ngx_alloc(sizeof(NGINX_VAR)
-//                    + cycle->listening.nelts * (NGX_INT32_LEN + 1) + 2,
-//                    cycle->log);
-//
-//    p = ngx_cpymem(var, NGINX_VAR "=", sizeof(NGINX_VAR));
-//
-//    ls = cycle->listening.elts;
-//    for (i = 0; i < cycle->listening.nelts; i++) {
-//        p = ngx_sprintf(p, "%ud;", ls[i].fd);
-//    }
-//
-//    *p = '\0';
-//
-//    env[n++] = var;
-//
-//#if (NGX_SETPROCTITLE_USES_ENV)
-//
-//    /* allocate the spare 300 bytes for the new binary process title */
-//
-//    env[n++] = "SPARE=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-//               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-//               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-//               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-//               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-//
-//#endif
-//
-//    env[n] = NULL;
-//
-//#if (NGX_DEBUG)
-//    {
-//    char  **e;
-//    for (e = env; *e; e++) {
-//        ngx_log_debug1(NGX_LOG_DEBUG_CORE, cycle->log, 0, "env: %s", *e);
-//    }
-//    }
-//#endif
-//
-//    ctx.envp = (char *const *) env;
-//
-//    ccf = (ngx_core_conf_t *) ngx_get_conf(cycle->conf_ctx, ngx_core_module);
-//
-//    if (ngx_rename_file(ccf->pid.data, ccf->oldpid.data) != NGX_OK) {
-//        ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_errno,
-//                      ngx_rename_file_n " %s to %s failed "
-//                      "before executing new binary process \"%s\"",
-//                      ccf->pid.data, ccf->oldpid.data, argv[0]);
-//
-//        ngx_free(env);
-//        ngx_free(var);
-//
-//        return NGX_INVALID_PID;
-//    }
-//
-//    pid = ngx_execute(cycle, &ctx);
-//
-//    if (pid == NGX_INVALID_PID) {
-//        if (ngx_rename_file(ccf->oldpid.data, ccf->pid.data) != NGX_OK) {
-//            ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_errno,
-//                          ngx_rename_file_n " %s back to %s failed after "
-//                          "the try to execute the new binary process \"%s\"",
-//                          ccf->oldpid.data, ccf->pid.data, argv[0]);
-//        }
-//    }
-//
-//    ngx_free(env);
-//    ngx_free(var);
-//
-//    return pid;
-//}
+ngx_pid_t
+ngx_exec_new_binary(ngx_cycle_t *cycle, char *const *argv)
+{
+    char             **env, *var;
+    u_char            *p;
+    ngx_uint_t         i, n;
+    ngx_pid_t          pid;
+    ngx_exec_ctx_t     ctx;
+    ngx_core_conf_t   *ccf;
+    ngx_listening_t   *ls;
+
+    ngx_memzero(&ctx, sizeof(ngx_exec_ctx_t));
+
+    ctx.path = argv[0];
+    ctx.name = "new binary process";
+    ctx.argv = argv;
+
+    n = 2;
+    env = ngx_set_environment(cycle, &n);
+    if (env == NULL) {
+        return NGX_INVALID_PID;
+    }
+
+    var = ngx_alloc(sizeof(NGINX_VAR)
+                    + cycle->listening.nelts * (NGX_INT32_LEN + 1) + 2,
+                    cycle->log);
+
+    p = ngx_cpymem(var, NGINX_VAR "=", sizeof(NGINX_VAR));
+
+    ls = cycle->listening.elts;
+    for (i = 0; i < cycle->listening.nelts; i++) {
+        p = ngx_sprintf(p, "%ud;", ls[i].fd);
+    }
+
+    *p = '\0';
+
+    env[n++] = var;
+
+#if (NGX_SETPROCTITLE_USES_ENV)
+
+    /* allocate the spare 300 bytes for the new binary process title */
+
+    env[n++] = "SPARE=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+               "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+
+#endif
+
+    env[n] = NULL;
+
+#if (NGX_DEBUG)
+    {
+    char  **e;
+    for (e = env; *e; e++) {
+        ngx_log_debug1(NGX_LOG_DEBUG_CORE, cycle->log, 0, "env: %s", *e);
+    }
+    }
+#endif
+
+    ctx.envp = (char *const *) env;
+
+    ccf = (ngx_core_conf_t *) ngx_get_conf(cycle->conf_ctx, ngx_core_module);
+
+    if (ngx_rename_file(ccf->pid.data, ccf->oldpid.data) != NGX_OK) {
+        ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_errno,
+                      ngx_rename_file_n " %s to %s failed "
+                      "before executing new binary process \"%s\"",
+                      ccf->pid.data, ccf->oldpid.data, argv[0]);
+
+        ngx_free(env);
+        ngx_free(var);
+
+        return NGX_INVALID_PID;
+    }
+
+    pid = ngx_execute(cycle, &ctx);
+
+    if (pid == NGX_INVALID_PID) {
+        if (ngx_rename_file(ccf->oldpid.data, ccf->pid.data) != NGX_OK) {
+            ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_errno,
+                          ngx_rename_file_n " %s back to %s failed after "
+                          "the try to execute the new binary process \"%s\"",
+                          ccf->oldpid.data, ccf->pid.data, argv[0]);
+        }
+    }
+
+    ngx_free(env);
+    ngx_free(var);
+
+    return pid;
+}
 
 /*get_options负责解析nginx启动时的命令参数*/
 static ngx_int_t

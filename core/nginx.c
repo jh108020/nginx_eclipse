@@ -7,7 +7,6 @@
 #include "ngx_core.h"
 #include "nginx.h"
 
-void fff();
 static ngx_int_t ngx_add_inherited_sockets(ngx_cycle_t *cycle);
 static ngx_int_t ngx_get_options(int argc, char *const *argv);
 static ngx_int_t ngx_process_options(ngx_cycle_t *cycle);
@@ -1337,13 +1336,3 @@ ngx_get_cpu_affinity(ngx_uint_t n)
 
     return ccf->cpu_affinity[ccf->cpu_affinity_n - 1];
 }
-
-
-void fff(){
-	int a=4;
-	//master pid， 获取当前进程ID
-    ngx_pid = ngx_getpid();
-	printf("%d\n",a);
-	printf("%d\n",ngx_pid);
-}
-

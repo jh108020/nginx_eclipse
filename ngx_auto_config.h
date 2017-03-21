@@ -1,4 +1,4 @@
-#define NGX_CONFIGURE " --with-pcre --with-zlib --with-openssl --with-http_ssl_module"
+#define NGX_CONFIGURE " --with-pcre --with-debug"
 
 #ifndef NGX_COMPILER
 #define NGX_COMPILER  "msvc 2005 "

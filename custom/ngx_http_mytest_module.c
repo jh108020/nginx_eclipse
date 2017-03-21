@@ -55,6 +55,8 @@ static char* ngx_http_mytest(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 //回调函数
 static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r)
 {
+    ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                   "http mytest handler start");
     if(!(r->method & (NGX_HTTP_GET | NGX_HTTP_HEAD)))
         return NGX_HTTP_NOT_ALLOWED;
 
@@ -85,5 +87,7 @@ static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r)
     out.buf = b;
     out.next = NULL;
 
+    ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                   "http mytest handler end");
     return ngx_http_output_filter(r, &out);
 }

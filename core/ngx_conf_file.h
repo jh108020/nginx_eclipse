@@ -74,6 +74,41 @@
 
 #define NGX_MAX_CONF_ERRSTR  1024
 
+// 下面的type取值说明
+//    NGX_CONF_NOARGS：配置指令不接受任何参数。
+//    NGX_CONF_TAKE1：配置指令接受1个参数。
+//    NGX_CONF_TAKE2：配置指令接受2个参数。
+//    NGX_CONF_TAKE3：配置指令接受3个参数。
+//    NGX_CONF_TAKE4：配置指令接受4个参数。
+//    NGX_CONF_TAKE5：配置指令接受5个参数。
+//    NGX_CONF_TAKE6：配置指令接受6个参数。
+//    NGX_CONF_TAKE7：配置指令接受7个参数。
+//    可以组合多个属性，比如一个指令即可以不填参数，也可以接受1个或者2个参数。那么就是NGX_CONF_NOARGS|NGX_CONF_TAKE1|NGX_CONF_TAKE2。如果写上面三个属性在一起，你觉得麻烦，那么没有关系，nginx提供了一些定义，使用起来更简洁。
+//    NGX_CONF_TAKE12：配置指令接受1个或者2个参数。
+//    NGX_CONF_TAKE13：配置指令接受1个或者3个参数。
+//    NGX_CONF_TAKE23：配置指令接受2个或者3个参数。
+//    NGX_CONF_TAKE123：配置指令接受1个或者2个或者3参数。
+//    NGX_CONF_TAKE1234：配置指令接受1个或者2个或者3个或者4个参数。
+//    NGX_CONF_1MORE：配置指令接受至少一个参数。
+//    NGX_CONF_2MORE：配置指令接受至少两个参数。
+//    NGX_CONF_MULTI: 配置指令可以接受多个参数，即个数不定。
+//    NGX_CONF_BLOCK：配置指令可以接受的值是一个配置信息块。也就是一对大括号括起来的内容。里面可以再包括很多的配置指令。比如常见的server指令就是这个属性的。
+//    NGX_CONF_FLAG：配置指令可以接受的值是”on”或者”off”，最终会被转成bool值。
+//    NGX_CONF_ANY：配置指令可以接受的任意的参数值。一个或者多个，或者”on”或者”off”，或者是配置块。
+//    最后要说明的是，无论如何，nginx的配置指令的参数个数不可以超过NGX_CONF_MAX_ARGS个。目前这个值被定义为8，也就是不能超过8个参数值。
+//    下面介绍一组说明配置指令可以出现的位置的属性。
+//    NGX_DIRECT_CONF：可以出现在配置文件中最外层。例如已经提供的配置指令daemon，master_process等。
+//    NGX_MAIN_CONF: http、mail、events、error_log等。
+//    NGX_ANY_CONF: 该配置指令可以出现在任意配置级别上。
+//    对于我们编写的大多数模块而言，都是在处理http相关的事情，也就是所谓的都是NGX_HTTP_MODULE，对于这样类型的模块，其配置可能出现的位置也是分为直接出现在http里面，以及其他位置。
+//    NGX_HTTP_MAIN_CONF: 可以直接出现在http配置指令里。
+//    NGX_HTTP_SRV_CONF: 可以出现在http里面的server配置指令里。
+//    NGX_HTTP_LOC_CONF: 可以出现在http server块里面的location配置指令里。
+//    NGX_HTTP_UPS_CONF: 可以出现在http里面的upstream配置指令里。
+//    NGX_HTTP_SIF_CONF: 可以出现在http里面的server配置指令里的if语句所在的block中。
+//    NGX_HTTP_LMT_CONF: 可以出现在http里面的limit_except指令的block中。
+//    NGX_HTTP_LIF_CONF: 可以出现在http server块里面的location配置指令里的if语句所在的block中。
+
 //commands数组用于定义模块的配置文件参数。
 struct ngx_command_s {
     ngx_str_t             name;         //配置项名称
@@ -85,7 +120,8 @@ struct ngx_command_s {
     //这个可以使用nginx预设的14个解析配置方法，也可以使用自定义的。
 	//cf参数保存了从配置文件中读取到的原始字符串以及相关的一些信息，其中有一个args字段，它表示配置指令以及该配置指令的参数，ngx_str_t类型。
     //conf就是定义的存储这个配置值的结构体，在使用的时候需要转换成自己使用的类型。
-	char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+	//set对应下面的ngx_http_mytest
+    char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
     //在配置文件中的偏移量，它的取值范围是：
     /*
@@ -111,6 +147,19 @@ struct ngx_command_s {
     */
     void                 *post;
 };
+
+//static ngx_command_t ngx_http_mytest_commands[] = {
+//    {
+//        ngx_string("mytest"),//指令名称，在配置文件中使用
+//        NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LMT_CONF|NGX_CONF_NOARGS,
+//        ngx_http_mytest, //回调函数
+//        NGX_HTTP_LOC_CONF_OFFSET, //位置
+//        0, //指令的值保存的位置
+//        NULL
+//    },
+//    ngx_null_command
+//};
+
 
 #define ngx_null_command  { ngx_null_string, 0, NULL, 0, 0, NULL }  //空命令
 

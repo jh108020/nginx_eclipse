@@ -70,7 +70,7 @@ ngx_http_static_handler(ngx_http_request_t *r)
     }
 	
 	//判断请求的uri的结尾字符是不是斜杠'/'；
-	//如果是，说明求情不是一个文件，给后续的handler处理。
+	//如果是，说明请求不是一个文件，给后续的handler处理。
     if (r->uri.data[r->uri.len - 1] == '/') {
         return NGX_DECLINED;
     }
